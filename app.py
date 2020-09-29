@@ -37,13 +37,13 @@ class Drone(object):
         cmds.upload()
         self.vehicle.mode = VehicleMode("AUTO")
         
-
     def goto(self, point):
         self.vehicle.simple_goto(point)
 
     def _armed_callback(self, vehicle, name, message):
         if self.vehicle.location.global_relative_frame.alt < 100:
             self.vehicle.mode = VehicleMode("AUTO")
+            
             #self.vehicle.simple_takeoff(100) # takeoff at 100 meters
 
 class droneProcess(object):
@@ -67,6 +67,12 @@ def startSimualtor():
     if(proc.processId == None):
         lat = -35.22313
         lng = 138.38434
+        if 'lat' in request.args:
+            lat = request.args.get('lat')
+            
+        if 'lng' in request.args:
+            lng = request.args.get('lng')
+        print('Using lat: ', lat, ' and using lon: ', lng)
         proc.setup(str(lat), str(lng))
     return "Ok"
 
@@ -138,6 +144,7 @@ def goToLocation():
     cmds.add(goToCmd)
     cmds.upload()
     cmds.wait_ready()
+    
     d.vehicle.mode = VehicleMode("AUTO")
     return "Ok"
 
